@@ -112,7 +112,7 @@ public interface IBucketOperations
     ///     For example, if you call ListObjectsAsync on a bucket with versioning
     ///     enabled or object lock enabled
     /// </exception>
-    IObservable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets notification configuration for this bucket
@@ -167,7 +167,7 @@ public interface IBucketOperations
     /// <exception cref="InvalidBucketNameException">When bucket name is invalid</exception>
     /// <exception cref="BucketNotFoundException">When bucket is not found</exception>
     /// <exception cref="MalFormedXMLException">When configuration XML provided is invalid</exception>
-    IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
+    IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -264,7 +264,7 @@ public interface IBucketOperations
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns>An observable of items that client can subscribe to</returns>
     [Obsolete("Use ListObjectsAsync method with ListObjectsArgs object. Refer ListObjects example code.")]
-    IObservable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false,
+    IAsyncEnumerable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -330,7 +330,7 @@ public interface IBucketOperations
     /// <returns>An observable of JSON-based notification events</returns>
     [Obsolete(
         "Use ListenBucketNotificationsAsync method with ListenBucketNotificationsArgs object. Refer ListenBucketNotifications example code.")]
-    IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(string bucketName, IList<EventType> events,
+    IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(string bucketName, IList<EventType> events,
         string prefix = "", string suffix = "", CancellationToken cancellationToken = default);
 
     /// <summary>

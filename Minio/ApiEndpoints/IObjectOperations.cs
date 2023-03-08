@@ -148,7 +148,7 @@ public interface IObjectOperations
     /// <exception cref="InvalidObjectNameException">When object name is invalid</exception>
     /// <exception cref="BucketNotFoundException">When bucket is not found</exception>
     /// <exception cref="NotImplementedException">When a functionality or extension is not implemented</exception>
-    Task<IObservable<DeleteError>> RemoveObjectsAsync(RemoveObjectsArgs args,
+    IAsyncEnumerable<DeleteError> RemoveObjectsAsync(RemoveObjectsArgs args,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -230,7 +230,7 @@ public interface IObjectOperations
     /// <exception cref="InvalidObjectNameException">When object name is invalid</exception>
     /// <exception cref="BucketNotFoundException">When bucket is not found</exception>
     /// <exception cref="ObjectNotFoundException">When object is not found</exception>
-    IObservable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
+    IAsyncEnumerable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -365,7 +365,7 @@ public interface IObjectOperations
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns></returns>
     [Obsolete("Use RemoveObjectsAsync method with RemoveObjectsArgs object. Refer RemoveObjects example code.")]
-    Task<IObservable<DeleteError>> RemoveObjectAsync(string bucketName, IEnumerable<string> objectsList,
+    IAsyncEnumerable<DeleteError> RemoveObjectAsync(string bucketName, IEnumerable<string> objectsList,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -402,7 +402,7 @@ public interface IObjectOperations
     /// <returns>A lazily populated list of incomplete uploads</returns>
     [Obsolete(
         "Use ListIncompleteUploads method with ListIncompleteUploadsArgs object. Refer ListIncompleteUploads example code.")]
-    IObservable<Upload> ListIncompleteUploads(string bucketName, string prefix = "", bool recursive = false,
+    IAsyncEnumerable<Upload> ListIncompleteUploads(string bucketName, string prefix = "", bool recursive = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>

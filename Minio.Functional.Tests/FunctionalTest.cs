@@ -61,7 +61,7 @@ public static class FunctionalTest
         "Task RemoveBucketAsync(string bucketName, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string listObjectsSignature =
-        "IObservable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false, CancellationToken cancellationToken = default(CancellationToken))";
+        "IAsyncEnumerable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string putObjectSignature =
         "Task PutObjectAsync(PutObjectArgs args, CancellationToken cancellationToken = default(CancellationToken))";
@@ -70,10 +70,10 @@ public static class FunctionalTest
         "Task GetObjectAsync(GetObjectArgs args, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string listIncompleteUploadsSignature =
-        "IObservable<Upload> ListIncompleteUploads(ListIncompleteUploads args, CancellationToken cancellationToken = default(CancellationToken))";
+        "IAsyncEnumerable<Upload> ListIncompleteUploads(ListIncompleteUploads args, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string listenBucketNotificationsSignature =
-        "IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args, CancellationToken cancellationToken = default(CancellationToken))";
+        "IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string copyObjectSignature =
         "Task<CopyObjectResult> CopyObjectAsync(CopyObjectArgs args, CancellationToken cancellationToken = default(CancellationToken))";
@@ -85,7 +85,7 @@ public static class FunctionalTest
         "Task RemoveObjectAsync(RemoveObjectArgs args, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string removeObjectSignature2 =
-        "Task<IObservable<DeleteError>> RemoveObjectsAsync(RemoveObjectsArgs, CancellationToken cancellationToken = default(CancellationToken))";
+        "IAsyncEnumerable<DeleteError> RemoveObjectsAsync(RemoveObjectsArgs, CancellationToken cancellationToken = default(CancellationToken))";
 
     private const string removeIncompleteUploadSignature =
         "Task RemoveIncompleteUploadAsync(RemoveIncompleteUploadArgs args, CancellationToken cancellationToken = default(CancellationToken))";

@@ -16,7 +16,6 @@
  */
 
 using System.Globalization;
-using System.Reactive.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -88,38 +87,35 @@ public partial class MinioClient : IObjectOperations
     /// <exception cref="InvalidObjectNameException">When object name is invalid</exception>
     /// <exception cref="BucketNotFoundException">When bucket is not found</exception>
     /// <exception cref="ObjectNotFoundException">When object is not found</exception>
-    public IObservable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
+    public async IAsyncEnumerable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
         CancellationToken cancellationToken = default)
     {
         args?.Validate();
-        return Observable.Create<Upload>(
-            async obs =>
-            {
-                string nextKeyMarker = null;
-                string nextUploadIdMarker = null;
-                var isRunning = true;
 
-                while (isRunning)
-                {
-                    var getArgs = new GetMultipartUploadsListArgs()
-                        .WithBucket(args.BucketName)
-                        .WithDelimiter(args.Delimiter)
-                        .WithPrefix(args.Prefix)
-                        .WithKeyMarker(nextKeyMarker)
-                        .WithUploadIdMarker(nextUploadIdMarker);
-                    var uploads = await GetMultipartUploadsListAsync(getArgs, cancellationToken).ConfigureAwait(false);
-                    if (uploads == null)
-                    {
-                        isRunning = false;
-                        continue;
-                    }
+        string nextKeyMarker = null;
+        string nextUploadIdMarker = null;
+        var isRunning = true;
 
-                    foreach (var upload in uploads.Item2) obs.OnNext(upload);
-                    nextKeyMarker = uploads.Item1.NextKeyMarker;
-                    nextUploadIdMarker = uploads.Item1.NextUploadIdMarker;
-                    isRunning = uploads.Item1.IsTruncated;
-                }
-            });
+        while (isRunning) {
+            var getArgs = new GetMultipartUploadsListArgs()
+                .WithBucket(args.BucketName)
+                .WithDelimiter(args.Delimiter)
+                .WithPrefix(args.Prefix)
+                .WithKeyMarker(nextKeyMarker)
+                .WithUploadIdMarker(nextUploadIdMarker);
+            var uploads = await GetMultipartUploadsListAsync(getArgs, cancellationToken).ConfigureAwait(false);
+            if (uploads == null) {
+                isRunning = false;
+                continue;
+            }
+
+            foreach (var upload in uploads.Item2)
+                yield return upload;
+
+            nextKeyMarker = uploads.Item1.NextKeyMarker;
+            nextUploadIdMarker = uploads.Item1.NextUploadIdMarker;
+            isRunning = uploads.Item1.IsTruncated;
+        }
     }
 
     /// <summary>
@@ -384,7 +380,7 @@ public partial class MinioClient : IObjectOperations
     /// <exception cref="ObjectNotFoundException">When object is not found</exception>
     /// <exception cref="NotImplementedException">When a functionality or extension is not implemented</exception>
     /// <exception cref="MalFormedXMLException">When configuration XML provided is invalid</exception>
-    public async Task<IObservable<DeleteError>> RemoveObjectsAsync(RemoveObjectsArgs args,
+    public async IAsyncEnumerable<DeleteError> RemoveObjectsAsync(RemoveObjectsArgs args,
         CancellationToken cancellationToken = default)
     {
         args?.Validate();
@@ -394,13 +390,9 @@ public partial class MinioClient : IObjectOperations
         else
             errs = await removeObjectsHelper(args, errs, cancellationToken).ConfigureAwait(false);
 
-        return Observable.Create<DeleteError>( // From Current change
-            async obs =>
-            {
-                await Task.Yield();
-                foreach (var error in errs) obs.OnNext(error);
-            }
-        );
+        await Task.Yield();
+        foreach (var error in errs)
+            yield return error;
     }
 
     /// <summary>
@@ -900,7 +892,7 @@ public partial class MinioClient : IObjectOperations
     /// <returns>A lazily populated list of incomplete uploads</returns>
     [Obsolete(
         "Use ListIncompleteUploads method with ListIncompleteUploadsArgs object. Refer ListIncompleteUploads example code.")]
-    public IObservable<Upload> ListIncompleteUploads(string bucketName, string prefix = null, bool recursive = true,
+    public IAsyncEnumerable<Upload> ListIncompleteUploads(string bucketName, string prefix = null, bool recursive = true,
         CancellationToken cancellationToken = default)
     {
         var args = new ListIncompleteUploadsArgs()
@@ -958,7 +950,7 @@ public partial class MinioClient : IObjectOperations
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns></returns>
     [Obsolete("Use RemoveObjectsAsync method with RemoveObjectsArgs object. Refer RemoveObjects example code.")]
-    public Task<IObservable<DeleteError>> RemoveObjectAsync(string bucketName, IEnumerable<string> objectNames,
+    public IAsyncEnumerable<DeleteError> RemoveObjectAsync(string bucketName, IEnumerable<string> objectNames,
         CancellationToken cancellationToken = default)
     {
         var args = new RemoveObjectsArgs()
@@ -1402,24 +1394,21 @@ public partial class MinioClient : IObjectOperations
     /// <param name="uploadId"></param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns></returns>
-    private IObservable<Part> ListParts(string bucketName, string objectName, string uploadId,
+    private async IAsyncEnumerable<Part> ListParts(string bucketName, string objectName, string uploadId,
         CancellationToken cancellationToken)
     {
-        return Observable.Create<Part>(
-            async obs =>
-            {
-                var nextPartNumberMarker = 0;
-                var isRunning = true;
-                while (isRunning)
-                {
-                    var uploads = await GetListPartsAsync(bucketName, objectName, uploadId, nextPartNumberMarker,
-                        cancellationToken).ConfigureAwait(false);
-                    foreach (var part in uploads.Item2) obs.OnNext(part);
+        var nextPartNumberMarker = 0;
+        var isRunning = true;
+        while (isRunning)
+        {
+            var uploads = await GetListPartsAsync(bucketName, objectName, uploadId, nextPartNumberMarker,
+                cancellationToken).ConfigureAwait(false);
+            foreach (var part in uploads.Item2)
+                yield return part;
 
-                    nextPartNumberMarker = uploads.Item1.NextPartNumberMarker;
-                    isRunning = uploads.Item1.IsTruncated;
-                }
-            });
+            nextPartNumberMarker = uploads.Item1.NextPartNumberMarker;
+            isRunning = uploads.Item1.IsTruncated;
+        }
     }
 
     /// <summary>

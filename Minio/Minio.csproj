@@ -13,7 +13,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
-		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
+		<!--
+		<PackageReference Include="System.Reactive.Linq" Version="5.0.0" />-->
 	</ItemGroup>
 
 </Project>

@@ -62,16 +62,16 @@ public interface IMinioClient : IDisposable
 
     Task<ListAllMyBucketsResult> ListBucketsAsync(CancellationToken cancellationToken = default);
 
-    IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
+    IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
         CancellationToken cancellationToken = default);
 
-    IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(string bucketName, IList<EventType> events,
+    IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(string bucketName, IList<EventType> events,
         string prefix = "", string suffix = "", CancellationToken cancellationToken = default);
 
-    IObservable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
+    IAsyncEnumerable<Upload> ListIncompleteUploads(ListIncompleteUploadsArgs args,
         CancellationToken cancellationToken = default);
 
-    IObservable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default);
     Task MakeBucketAsync(MakeBucketArgs args, CancellationToken cancellationToken = default);
     Task<string> PresignedGetObjectAsync(PresignedGetObjectArgs args);
     Task<(Uri, Dictionary<string, string>)> PresignedPostPolicyAsync(PostPolicy policy);
@@ -93,7 +93,7 @@ public interface IMinioClient : IDisposable
     Task RemoveObjectLockConfigurationAsync(RemoveObjectLockConfigurationArgs args,
         CancellationToken cancellationToken = default);
 
-    Task<IObservable<DeleteError>> RemoveObjectsAsync(RemoveObjectsArgs args,
+    IAsyncEnumerable<DeleteError> RemoveObjectsAsync(RemoveObjectsArgs args,
         CancellationToken cancellationToken = default);
 
     Task RemoveObjectTagsAsync(RemoveObjectTagsArgs args, CancellationToken cancellationToken = default);

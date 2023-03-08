@@ -16,7 +16,6 @@
  */
 
 using System.Net;
-using System.Reactive.Linq;
 using System.Xml.Serialization;
 using Minio.DataModel;
 using Minio.DataModel.ILM;
@@ -85,7 +84,7 @@ public partial class MinioClient : IBucketOperations
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns>An observable of items that client can subscribe to</returns>
     [Obsolete("Use ListObjectsAsync method with ListObjectsArgs object. Refer ListObjects example code.")]
-    public IObservable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false,
+    public IAsyncEnumerable<Item> ListObjectsAsync(string bucketName, string prefix = null, bool recursive = false,
         CancellationToken cancellationToken = default)
     {
         var args = new ListObjectsArgs()
@@ -329,7 +328,7 @@ public partial class MinioClient : IBucketOperations
     ///     For example, if you call ListObjectsAsync on a bucket with versioning
     ///     enabled or object lock enabled
     /// </exception>
-    public IObservable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default)
     {
         args?.Validate();
         return Observable.Create<Item>(
@@ -464,7 +463,7 @@ public partial class MinioClient : IBucketOperations
     /// <exception cref="InvalidBucketNameException">When bucket name is invalid</exception>
     /// <exception cref="BucketNotFoundException">When bucket is not found</exception>
     /// <exception cref="MalFormedXMLException">When configuration XML provided is invalid</exception>
-    public IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
+    public IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(ListenBucketNotificationsArgs args,
         CancellationToken cancellationToken = default)
     {
         if (s3utils.IsAmazonEndPoint(BaseUrl))
@@ -813,7 +812,7 @@ public partial class MinioClient : IBucketOperations
     /// <param name="suffix">Filter keys ending with this suffix</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the operation</param>
     /// <returns>An observable of JSON-based notification events</returns>
-    public IObservable<MinioNotificationRaw> ListenBucketNotificationsAsync(
+    public IAsyncEnumerable<MinioNotificationRaw> ListenBucketNotificationsAsync(
         string bucketName,
         IList<EventType> events,
         string prefix = "",
