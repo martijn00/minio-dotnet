@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -189,7 +190,12 @@ internal class V4Authenticator
         var dateRegionKey = SignHmac(dateKey, regionBytes);
         dateRegionServiceKey = SignHmac(dateRegionKey, serviceBytes);
         requestBytes = Encoding.UTF8.GetBytes("aws4_request");
+#if NETSTANDARD
+        var signingKey = Encoding.UTF8.GetString(SignHmac(dateRegionServiceKey, requestBytes).ToArray());
+#else
         var signingKey = Encoding.UTF8.GetString(SignHmac(dateRegionServiceKey, requestBytes));
+#endif
+
         return SignHmac(dateRegionServiceKey, requestBytes);
     }
 
@@ -201,7 +207,13 @@ internal class V4Authenticator
     /// <returns>Computed hmac of input content</returns>
     private ReadOnlySpan<byte> SignHmac(ReadOnlySpan<byte> key, ReadOnlySpan<byte> content)
     {
+#if NETSTANDARD
+        using var hmac = new HMACSHA256(key.ToArray());
+        hmac.Initialize();
+        return hmac.ComputeHash(content.ToArray());
+#else
         return HMACSHA256.HashData(key, content);
+#endif
     }
 
     /// <summary>
@@ -238,7 +250,13 @@ internal class V4Authenticator
     /// <returns>Bytes of sha256 checksum</returns>
     private ReadOnlySpan<byte> ComputeSha256(ReadOnlySpan<byte> body)
     {
-        return SHA256.HashData(body);
+#if NETSTANDARD
+        var sha = SHA256.Create();
+        var hash = sha.ComputeHash(body.ToArray());
+#else
+        var hash = SHA256.HashData(body);
+#endif
+        return hash;
     }
 
     /// <summary>
@@ -527,14 +545,25 @@ internal class V4Authenticator
                 return;
             }
 
+#if NETSTANDARD
+            var sha = SHA256.Create();
+            var hash = sha.ComputeHash(body.ToArray());
+#else
             var hash = SHA256.HashData(body.Span);
+#endif
             var hex = BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
             requestBuilder.AddOrUpdateHeaderParameter("x-amz-content-sha256", hex);
         }
         else if (!isSecure && !requestBuilder.Content.IsEmpty)
         {
-            ReadOnlySpan<byte> hash = MD5.HashData(Encoding.UTF8.GetBytes(requestBuilder.Content.ToString()));
+            var bytes = Encoding.UTF8.GetBytes(requestBuilder.Content.ToString());
 
+#if NETSTANDARD
+            var md5 = MD5.Create();
+            var hash = md5.ComputeHash(bytes);
+#else
+            ReadOnlySpan<byte> hash = MD5.HashData(bytes);
+#endif
             var base64 = Convert.ToBase64String(hash);
             requestBuilder.AddHeaderParameter("Content-Md5", base64);
         }
