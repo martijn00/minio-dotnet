@@ -250,7 +250,7 @@ internal class V4Authenticator
     private ReadOnlySpan<byte> ComputeSha256(ReadOnlySpan<byte> body)
     {
 #if NETSTANDARD
-        var sha = SHA256.Create();
+        using var sha = SHA256.Create();
         var hash = sha.ComputeHash(body.ToArray());
 #else
         var hash = SHA256.HashData(body);
@@ -545,7 +545,7 @@ internal class V4Authenticator
             }
 
 #if NETSTANDARD
-            var sha = SHA256.Create();
+            using var sha = SHA256.Create();
             var hash = sha.ComputeHash(body.ToArray());
 #else
             var hash = SHA256.HashData(body.Span);
@@ -558,7 +558,7 @@ internal class V4Authenticator
             var bytes = Encoding.UTF8.GetBytes(requestBuilder.Content.ToString());
 
 #if NETSTANDARD
-            var md5 = MD5.Create();
+            using var md5 = MD5.Create();
             var hash = md5.ComputeHash(bytes);
 #else
             ReadOnlySpan<byte> hash = MD5.HashData(bytes);
