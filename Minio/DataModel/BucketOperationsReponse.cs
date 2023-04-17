@@ -62,10 +62,10 @@ internal class ListBucketsResponse : GenericResponse
 internal class ListObjectsItemResponse
 {
     internal Item BucketObjectsLastItem;
-    internal IObserver<Item> ItemObservable;
+    internal Item ItemObservable;
 
     internal ListObjectsItemResponse(ListObjectsArgs args, Tuple<ListBucketResult, List<Item>> objectList,
-        IObserver<Item> obs)
+        Item obs)
     {
         ItemObservable = obs;
         NextMarker = string.Empty;
@@ -74,7 +74,7 @@ internal class ListObjectsItemResponse
             BucketObjectsLastItem = item;
             if (string.Equals(objectList.Item1.EncodingType, "url", StringComparison.OrdinalIgnoreCase))
                 item.Key = HttpUtility.UrlDecode(item.Key);
-            ItemObservable.OnNext(item);
+            ItemObservable = item;
         }
 
         if (objectList.Item1.NextMarker != null)
@@ -99,18 +99,18 @@ internal class ListObjectsItemResponse
 internal class ListObjectVersionResponse
 {
     internal Item BucketObjectsLastItem;
-    internal IObserver<Item> ItemObservable;
+    //internal Item ItemObservable;
 
     internal ListObjectVersionResponse(ListObjectsArgs args, Tuple<ListVersionsResult, List<Item>> objectList,
-        IObserver<Item> obs)
+        Item obs)
     {
-        ItemObservable = obs;
+        //ItemObservable = obs;
         foreach (var item in objectList.Item2)
         {
             BucketObjectsLastItem = item;
             if (string.Equals(objectList.Item1.EncodingType, "url", StringComparison.OrdinalIgnoreCase))
                 item.Key = HttpUtility.UrlDecode(item.Key);
-            ItemObservable.OnNext(item);
+            //ItemObservable = item;
         }
 
         if (objectList.Item1.NextMarker != null)

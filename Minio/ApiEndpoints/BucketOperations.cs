@@ -189,9 +189,66 @@ public partial class MinioClient : IBucketOperations
     ///     For example, if you call ListObjectsAsync on a bucket with versioning
     ///     enabled or object lock enabled
     /// </exception>
-    public IObservable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Item> ListObjectsAsync(ListObjectsArgs args, CancellationToken cancellationToken = default)
     {
         args?.Validate();
+
+        var isRunning = true;
+        var delimiter = args.Recursive ? string.Empty : "/";
+        var marker = string.Empty;
+        uint count = 0;
+        var versionIdMarker = string.Empty;
+        var nextContinuationToken = string.Empty;
+
+        while (isRunning)
+        {
+            var goArgs = new GetObjectListArgs()
+                .WithBucket(args.BucketName)
+                .WithPrefix(args.Prefix)
+                .WithDelimiter(delimiter)
+                .WithVersions(args.Versions)
+                .WithContinuationToken(nextContinuationToken)
+                .WithMarker(marker)
+                .WithListObjectsV1(!args.UseV2)
+                .WithHeaders(args.Headers)
+                .WithVersionIdMarker(versionIdMarker);
+            if (args.Versions)
+            {
+                var objectList = await GetObjectVersionsListAsync(goArgs, cancellationToken).ConfigureAwait(false);
+                var listObjectsItemResponse = new ListObjectVersionResponse(args, objectList, null);
+                if (objectList.Item2.Count == 0 && count == 0) break;
+
+                foreach (var item in objectList.Item2)
+                {
+                    yield return item;
+                }
+
+                
+                marker = listObjectsItemResponse.NextKeyMarker;
+                versionIdMarker = listObjectsItemResponse.NextVerMarker;
+                isRunning = objectList.Item1.IsTruncated;
+            }
+            else
+            {
+                var objectList = await GetObjectListAsync(goArgs, cancellationToken).ConfigureAwait(false);
+                if (objectList.Item2.Count == 0 &&
+                    objectList.Item1.KeyCount.Equals("0", StringComparison.OrdinalIgnoreCase) && count == 0)
+                    break;
+
+                var listObjectsItemResponse = new ListObjectsItemResponse(args, objectList, null);
+                marker = listObjectsItemResponse.NextMarker;
+                isRunning = objectList.Item1.IsTruncated;
+                nextContinuationToken = objectList.Item1.IsTruncated
+                    ? objectList.Item1.NextContinuationToken
+                    : string.Empty;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            count++;
+        }
+
+
+        /*
         return Observable.Create<Item>(
             async (obs, ct) =>
             {
@@ -244,7 +301,7 @@ public partial class MinioClient : IBucketOperations
                     count++;
                 }
             }
-        );
+        );*/
     }
 
     /// <summary>
