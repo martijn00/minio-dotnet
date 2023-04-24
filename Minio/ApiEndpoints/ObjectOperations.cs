@@ -241,8 +241,8 @@ public partial class MinioClient : IObjectOperations
         if (!string.IsNullOrEmpty(SessionToken)) args.Policy.FormData["x-amz-security-token"] = SessionToken;
         args.Policy.FormData["x-amz-signature"] = signature;
 
-        uri = RequestUtil.MakeTargetURL(BaseUrl, Secure, args.BucketName, region, false);
-        return (uri, args.Policy.FormData);
+        Uri = RequestUtil.MakeTargetURL(BaseUrl, Secure, args.BucketName, region, false);
+        return (Uri, args.Policy.FormData);
     }
 
     /// <summary>

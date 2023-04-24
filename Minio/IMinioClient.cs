@@ -26,6 +26,8 @@ namespace Minio;
 
 public interface IMinioClient : IDisposable
 {
+    internal string BaseUrl { get; set; }
+
     Task<bool> BucketExistsAsync(BucketExistsArgs args, CancellationToken cancellationToken = default);
     Task ClearObjectRetentionAsync(ClearObjectRetentionArgs args, CancellationToken cancellationToken = default);
     Task CopyObjectAsync(CopyObjectArgs args, CancellationToken cancellationToken = default);
@@ -100,7 +102,6 @@ public interface IMinioClient : IDisposable
     Task<SelectResponseStream> SelectObjectContentAsync(SelectObjectContentArgs args,
         CancellationToken cancellationToken = default);
 
-    void SetAppInfo(string appName, string appVersion);
     Task SetBucketEncryptionAsync(SetBucketEncryptionArgs args, CancellationToken cancellationToken = default);
     Task SetBucketLifecycleAsync(SetBucketLifecycleArgs args, CancellationToken cancellationToken = default);
     Task SetBucketNotificationsAsync(SetBucketNotificationsArgs args, CancellationToken cancellationToken = default);
@@ -114,8 +115,6 @@ public interface IMinioClient : IDisposable
     Task SetObjectRetentionAsync(SetObjectRetentionArgs args, CancellationToken cancellationToken = default);
     Task SetObjectTagsAsync(SetObjectTagsArgs args, CancellationToken cancellationToken = default);
     Task SetPolicyAsync(SetPolicyArgs args, CancellationToken cancellationToken = default);
-    void SetTraceOff();
-    void SetTraceOn(IRequestLogger logger = null);
     Task SetVersioningAsync(SetVersioningArgs args, CancellationToken cancellationToken = default);
     Task<ObjectStat> StatObjectAsync(StatObjectArgs args, CancellationToken cancellationToken = default);
     Task<HttpResponseMessage> WrapperGetAsync(string url);

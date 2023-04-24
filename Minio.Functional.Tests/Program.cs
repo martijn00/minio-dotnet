@@ -80,7 +80,7 @@ internal static class Program
         var destObjectName = FunctionalTest.GetRandomName();
 
         // Set app Info
-        minioClient.SetAppInfo("app-name", "app-version");
+        MinioClientExtensions.SetAppInfo("app-name", "app-version");
         // Set HTTP Tracing On
         // minioClient.SetTraceOn(new JsonNetLogger());
 

@@ -109,7 +109,7 @@ public class UrlTests
             .WithEndpoint("localhost:9000")
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo(null, "1.2.2");
+        MinioClientExtensions.SetAppInfo(null, "1.2.2");
     }
 
     [TestMethod]
@@ -120,7 +120,7 @@ public class UrlTests
             .WithEndpoint("localhost:9000")
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo("Hello-App", null);
+        MinioClientExtensions.SetAppInfo("Hello-App", null);
     }
 
     [TestMethod]
@@ -130,7 +130,7 @@ public class UrlTests
             .WithEndpoint("localhost:9000")
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo("Hello-App", "1.2.1");
+        MinioClientExtensions.SetAppInfo("Hello-App", "1.2.1");
     }
 
     [TestMethod]

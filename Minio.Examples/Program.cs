@@ -108,7 +108,7 @@ public static class Program
         var objectsList = new List<string>();
         for (var i = 0; i < 10; i++) objectsList.Add(objectName + i);
         // Set app Info 
-        minioClient.SetAppInfo("app-name", "app-version");
+        MinioClientExtensions.SetAppInfo("app-name", "app-version");
 
         // Set HTTP Tracing On
         // minioClient.SetTraceOn();

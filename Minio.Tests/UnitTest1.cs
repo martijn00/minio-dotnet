@@ -103,7 +103,7 @@ public class UnitTest1
         using var client = new MinioClient()
             .WithEndpoint("localhost", 9000)
             .Build();
-        client.SetAppInfo(null, "1.2.2");
+        MinioClientExtensions.SetAppInfo(null, "1.2.2");
     }
 
     [TestMethod]
@@ -113,7 +113,7 @@ public class UnitTest1
         using var client = new MinioClient()
             .WithEndpoint("localhost", 9000)
             .Build();
-        client.SetAppInfo("Hello-App", null);
+        MinioClientExtensions.SetAppInfo("Hello-App", null);
     }
 
     [TestMethod]
@@ -122,7 +122,7 @@ public class UnitTest1
         using var client = new MinioClient()
             .WithEndpoint("localhost", 9000)
             .Build();
-        client.SetAppInfo("Hello-App", "1.2.1");
+        MinioClientExtensions.SetAppInfo("Hello-App", "1.2.1");
     }
 
     [TestMethod]
@@ -254,7 +254,7 @@ public class UnitTest2
             .WithEndpoint("localhost", 9000)
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo(null, "1.2.2");
+        MinioClientExtensions.SetAppInfo(null, "1.2.2");
     }
 
     [TestMethod]
@@ -265,7 +265,7 @@ public class UnitTest2
             .WithEndpoint("localhost", 9000)
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo("Hello-App", null);
+        MinioClientExtensions.SetAppInfo("Hello-App", null);
     }
 
     [TestMethod]
@@ -275,7 +275,7 @@ public class UnitTest2
             .WithEndpoint("localhost", 9000)
             .WithCredentials("minio", "minio")
             .Build();
-        client.SetAppInfo("Hello-App", "1.2.1");
+        MinioClientExtensions.SetAppInfo("Hello-App", "1.2.1");
     }
 
     [TestMethod]

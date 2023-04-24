@@ -346,7 +346,7 @@ public partial class MinioClient : IBucketOperations
                 var requestMessageBuilder =
                     await CreateRequest(args).ConfigureAwait(false);
                 args = args.WithNotificationObserver(obs)
-                    .WithEnableTrace(trace);
+                    .WithEnableTrace(Trace);
                 using var response =
                     await ExecuteTaskAsync(NoErrorHandlers, requestMessageBuilder, cancellationToken: cancellationToken)
                         .ConfigureAwait(false);
