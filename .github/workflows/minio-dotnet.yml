@@ -2,7 +2,7 @@ name: Minio-dotnet Tests
 
 on:
   push:
-    branches: [ develop, main ]
+    branches: [ develop, main, githubtest ]
   pull_request:
     branches: [ develop ]
 
