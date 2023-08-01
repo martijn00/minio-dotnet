@@ -51,19 +51,19 @@ jobs:
       # Install dependencies
       - name: Install dependencies
         run: |
-          dotnet clean ${{ env.Solution_Name }} --configuration Release && dotnet nuget locals all --clear
           dotnet restore ${{ env.Solution_Name }}
 
       # Build
       - name: Build
-        run: dotnet build ${{ env.Solution_Name }} --configuration Release --no-restore
+        run: dotnet build ${{ env.Solution_Name }} --no-restore --configuration Release
 
       # Create the Nuget
       - name: Create the Nuget package
-        run: dotnet pack ${{ env.Minio_Project_Path }} --no-build --configuration Release --output ./artifacts
+        run: dotnet pack ${{ env.Minio_Project_Path }} --no-restore --no-build --configuration Release --output ./artifacts
 
       # Upload the normal artifacts
-      - uses: actions/upload-artifact@v3
+      - name: Upload the build output
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifacts
           path: |
@@ -71,7 +71,8 @@ jobs:
             **/obj/Release/
 
       # Upload the Nuget packages
-      - uses: actions/upload-artifact@v3
+      - name: Upload the Nuget packages output
+        uses: actions/upload-artifact@v3
         with:
           name: nuget-packages
           path: ./artifacts/*
@@ -124,7 +125,7 @@ jobs:
 
       # Execute build tests
       - name: Build & Unit Test
-        run: dotnet test ${{ env.Test_Project_Path }} --no-restore --no-build
+        run: dotnet test ${{ env.Test_Project_Path }} --no-restore --no-build --configuration Release
 
   functional_tests:
     needs: build
@@ -176,7 +177,7 @@ jobs:
             sudo cp /tmp/minio-config/certs/private.key /etc/ssl/private/
             /tmp/minio -C /tmp/minio-config server /tmp/fs{1...4} &
           fi
-          dotnet Minio.Functional.Tests/bin/Release/net6.0/Minio.Functional.Tests.dll
+          dotnet Minio.Functional.Tests.dll
 
   push_to_nuget:
     needs: [build, unit_tests, functional_tests]
