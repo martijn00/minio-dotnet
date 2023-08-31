@@ -44,9 +44,6 @@ public class MinioClientFactory : IMinioClientFactory
         if (string.IsNullOrEmpty(client.Config.Endpoint))
             _ = client.WithEndpoint(DefaultEndpoint);
 
-        _ = client.Build();
-
-
-        return client;
+        return client.Build();
     }
 }
