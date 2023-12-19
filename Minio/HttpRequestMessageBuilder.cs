@@ -83,7 +83,7 @@ internal class HttpRequestMessageBuilder
                             }
                             catch
                             {
-                                var success = request.Content.Headers.TryAddWithoutValidation(ContentTypeKey, val);
+                                var success = request.Content.Headers.TryAddWithoutValidation(HttpRequestMessageBuilder.ContentTypeKey, val);
                             }
 
                             break;
@@ -121,7 +121,7 @@ internal class HttpRequestMessageBuilder
         }
     }
 
-    public Dictionary<string, string> QueryParameters { get; }
+    public Dictionary<string, string?> QueryParameters { get; }
 
     public Dictionary<string, string> HeaderParameters { get; }
 
@@ -129,7 +129,7 @@ internal class HttpRequestMessageBuilder
 
     public ReadOnlyMemory<byte> Content { get; private set; }
 
-    public string ContentTypeKey => "Content-Type";
+    public static string ContentTypeKey => "Content-Type";
 
     public void AddHeaderParameter(string key, string value)
     {
@@ -153,7 +153,7 @@ internal class HttpRequestMessageBuilder
         BodyParameters.Add(key, value);
     }
 
-    public void AddQueryParameter(string key, string value)
+    public void AddQueryParameter(string key, string? value)
     {
         QueryParameters[key] = value;
     }
@@ -166,12 +166,12 @@ internal class HttpRequestMessageBuilder
     public void AddXmlBody(string body)
     {
         SetBody(Encoding.UTF8.GetBytes(body));
-        BodyParameters.Add(ContentTypeKey, "application/xml");
+        BodyParameters.Add(HttpRequestMessageBuilder.ContentTypeKey, "application/xml");
     }
 
     public void AddJsonBody(string body)
     {
         SetBody(Encoding.UTF8.GetBytes(body));
-        BodyParameters.Add(ContentTypeKey, "application/json");
+        BodyParameters.Add(HttpRequestMessageBuilder.ContentTypeKey, "application/json");
     }
 }

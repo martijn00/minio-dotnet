@@ -1032,7 +1032,7 @@ public static class Utils
         return sw.ToString();
     }
 
-    public static T DeserializeXml<T>(Stream stream) where T : class, new()
+    public static T? DeserializeXml<T>(Stream stream) where T : class, new()
     {
         if (stream == null || stream.Length == 0) return default;
 
@@ -1041,7 +1041,7 @@ public static class Utils
                 StringComparison.OrdinalIgnoreCase))
         {
             using var amazonAwsS3XmlReader = new AmazonAwsS3XmlReader(stream);
-            return (T)new XmlSerializer(typeof(T)).Deserialize(amazonAwsS3XmlReader);
+            return (T?)new XmlSerializer(typeof(T)).Deserialize(amazonAwsS3XmlReader);
         }
 
         using var reader = new StreamReader(stream);
@@ -1050,7 +1050,7 @@ public static class Utils
         return DeserializeXml<T>(xmlContent); // Call the string overload
     }
 
-    public static T DeserializeXml<T>(string xml) where T : class, new()
+    public static T? DeserializeXml<T>(string xml) where T : class, new()
     {
         if (string.IsNullOrEmpty(xml)) return default;
 
@@ -1066,10 +1066,10 @@ public static class Utils
         using var xmlReader = XmlReader.Create(stringReader, settings);
 
         var serializer = new XmlSerializer(typeof(T));
-        return (T)serializer.Deserialize(xmlReader);
+        return (T?)serializer.Deserialize(xmlReader);
     }
 
-    private static string GetNamespace<T>()
+    private static string? GetNamespace<T>()
     {
         return typeof(T).GetCustomAttributes(typeof(XmlRootAttribute), true)
             .FirstOrDefault() is XmlRootAttribute xmlRootAttribute

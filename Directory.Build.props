@@ -18,7 +18,7 @@
         <Product>$(AssemblyName) ($(TargetFramework))</Product>
         <Version>6.0.2</Version>
 
-        <!--<Nullable>enable</Nullable>-->
+        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>latest</LangVersion>
         <NoWarn>$(NoWarn);CS1591</NoWarn>
@@ -85,7 +85,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Meziantou.Analyzer" Version="2.0.121">
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.125">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>

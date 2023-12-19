@@ -125,7 +125,7 @@ public partial class MinioClient : IBucketOperations
     /// <exception cref="NotImplementedException">When object-lock or another extension is not implemented</exception>
     public async Task MakeBucketAsync(MakeBucketArgs args, CancellationToken cancellationToken = default)
     {
-        args?.Validate();
+        args.Validate();
         if (string.IsNullOrEmpty(args.Location))
             args.Location = Config.Region;
 

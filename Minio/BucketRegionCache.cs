@@ -85,12 +85,12 @@ public sealed class BucketRegionCache
     /// <param name="bucketName"></param>
     internal static async Task<string> Update(IMinioClient client, string bucketName)
     {
-        string region = null;
+        var region = string.Empty;
 
         if (!string.Equals(bucketName, null, StringComparison.OrdinalIgnoreCase) && client.Config.AccessKey is not null
             && client.Config.SecretKey is not null && !Instance.Exists(bucketName))
         {
-            string location = null;
+            string? location = null;
             var path = Utils.UrlEncode(bucketName);
             // Initialize client
             var requestUrl = RequestUtil.MakeTargetURL(client.Config.BaseUrl, client.Config.Secure);
@@ -103,7 +103,7 @@ public sealed class BucketRegionCache
             if (response is not null && HttpStatusCode.OK.Equals(response.StatusCode))
             {
                 var root = XDocument.Parse(response.Content);
-                location = root.Root.Value;
+                location = root?.Root?.Value;
             }
 
             if (string.IsNullOrEmpty(location))

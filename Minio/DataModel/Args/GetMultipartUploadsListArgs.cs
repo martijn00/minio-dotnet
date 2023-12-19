@@ -26,10 +26,10 @@ public class GetMultipartUploadsListArgs : BucketArgs<GetMultipartUploadsListArg
         MAX_UPLOAD_COUNT = 1000;
     }
 
-    internal string Prefix { get; private set; }
-    internal string Delimiter { get; private set; }
-    internal string KeyMarker { get; private set; }
-    internal string UploadIdMarker { get; private set; }
+    internal string? Prefix { get; private set; }
+    internal string? Delimiter { get; private set; }
+    internal string? KeyMarker { get; private set; }
+    internal string? UploadIdMarker { get; private set; }
     internal uint MAX_UPLOAD_COUNT { get; }
 
     public GetMultipartUploadsListArgs WithPrefix(string prefix)

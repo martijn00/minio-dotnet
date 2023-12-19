@@ -296,8 +296,8 @@ public static class RequestExtensions
 
         if (headerMap is not null)
         {
-            if (headerMap.TryGetValue(messageBuilder.ContentTypeKey, out var value) && !string.IsNullOrEmpty(value))
-                headerMap[messageBuilder.ContentTypeKey] = contentType;
+            if (headerMap.TryGetValue(HttpRequestMessageBuilder.ContentTypeKey, out var value) && !string.IsNullOrEmpty(value))
+                headerMap[HttpRequestMessageBuilder.ContentTypeKey] = contentType;
 
             foreach (var entry in headerMap) messageBuilder.AddOrUpdateHeaderParameter(entry.Key, entry.Value);
         }
